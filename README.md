@@ -1,7 +1,6 @@
 # backdoor-detector
 A little software that might help to find out if a computer has been hacked
 
- <one line to give the program's name and a brief idea of what it does.>
     Copyright © 2022  Jaime Arturo Sánchez Fernández
 
     This program is free software: you can redistribute it and/or modify
