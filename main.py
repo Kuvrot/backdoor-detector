@@ -21,13 +21,14 @@ def getName (address):
         lines = curAddress.readlines()
         for row in lines:
             if ('Name:' in row):
-                # if can't find the address and throws this error <ip> : Non-existent domain
-                if (row[0]  == '*'):
-                    name = "can't find " + address + " : Non-existent domain"
-                    break
-                else:
+                
                     name = row
                     break
+            # if can't find the address and throws this error <ip> : Non-existent domain (for example)    
+            elif ('***' in row):
+                    name = "can't find " + address + "you should check it manually"
+                    break
+                
 
     return name
 
@@ -55,6 +56,7 @@ while (True):
 
     # scanning
     if (command == 'scan' or command == 'run'):
+        report = open('report.txt' , 'w+')
         print("Scanning...")
         system ('netstat.exe -ano > ' + os.getcwd() + "/connections.jasf")
         system ('tasklist > ' + os.getcwd() + "/tasks.jasf")
@@ -82,11 +84,14 @@ while (True):
                     
                     if (foreignAddress != '127.0.0.1'):
                         print('ADDRESS: ' + foreignAddress + ' -- PID: ' + pid + ' -- ' + getName(foreignAddress) + ' -- PROCESS NAME: ' + getPidName(pid))
+                        print ("\n")
                         report.write('ADDRESS: ' + foreignAddress + ' -- PID: ' + pid + ' -- ' + getName(foreignAddress) + ' -- PROCESS NAME: ' + getPidName(pid) + '\n')
-                        
-        report.close()
+                        report.write ("\n")
+
+            report.close()
         print ("Done!")
-        input('Press ENTER to continue...') 
+        print (" A file called report.txt has been created ")
+        input('Press ENTER to continue...')
         system ('cls')   
                         
     # display credits and info about the autor
@@ -110,7 +115,7 @@ while (True):
         print("GNU General Public License for more details.")
         print("//////////////////////////////////////////////////////////////////")
         print("You should have received a copy of the GNU General Public License")
-        print("along with this program. (license.text)  If not, see https://www.gnu.org/licenses")
+        print("along with this program. (license.txt)  If not, see https://www.gnu.org/licenses")
         input('Press ENTER to continue...')
         system ('cls')    
 
