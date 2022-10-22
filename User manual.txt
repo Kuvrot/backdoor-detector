@@ -1,0 +1,9 @@
+Commands:
+
+run or scan for running the main function
+
+about for a small description of the program
+
+credits to show credits
+
+license to see the license of the software
