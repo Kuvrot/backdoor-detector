@@ -1,7 +1,7 @@
 import os
 from os import getpid, system, truncate
 
-# ISPs that are not a treath
+# this is in development
 #filter = ('amazon' , 'zoom' , 'cloudfront' , 'microsoft' , 'valve' , 'epicgames' , 'google' , 'amazonaws')
 
 system ( 'cls')
@@ -31,7 +31,7 @@ def getName (address):
 
     return name
 
-
+# a function that gets the name of the process trough the process identifier
 def getPidName (m_pid):
     name = ''
     with open (r'tasks.jasf' , 'r') as tasks:
@@ -63,8 +63,6 @@ while (True):
         # read all lines using readline()
             lines = connections.readlines()
             for row in lines:
-                # find() method returns -1 if the value is not found,
-                # if found it return 0
                 # Foreign address starts at position 32
                 foreignAddress = ""
                 # PID (process identifier) start at position 71
@@ -92,11 +90,17 @@ while (True):
         system ('cls')   
                         
     # display credits and info about the autor
-    if (command == 'about' or command == 'credits'):
+    if (command == 'credits'):
         print ("Copyright © <2022>  <Jaime Arturo Sanchez Fernandez>")
         print ("Developed in python")
         print ("This software is under GPL license - use license command for more information")
-        input()
+        input('Press ENTER to continue...')
+        system ('cls')    
+
+    if (command == 'about'):
+        print (" A little software that might help to find out if a computer has been hacked  ")
+        input('Press ENTER to continue...')
+        system ('cls')    
 
     if (command == 'license'):
         print("Copyright © <2022>  <Jaime Arturo Sanchez Fernandez>")
@@ -107,7 +111,8 @@ while (True):
         print("//////////////////////////////////////////////////////////////////")
         print("You should have received a copy of the GNU General Public License")
         print("along with this program. (license.text)  If not, see https://www.gnu.org/licenses")
-        input ()
+        input('Press ENTER to continue...')
+        system ('cls')    
 
     if (command == 'close' or command == 'quit'):
         print ("Exiting...")
