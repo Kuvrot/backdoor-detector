@@ -1,5 +1,14 @@
+# Coded by @kuvrot
+#Last revised 28/10/2022
+#Version 1.1
+
+#New features
+    # fix of bugs that didn't display correctly or at all the process name and connection name
+    # enhance the presentation of the connections and the report
+    # implementation of an ip blacklist
+
 import os
-from os import getpid, system, truncate
+from os import getcwd, getpid, system, truncate
 
 # this is in development
 #filter = ('amazon' , 'zoom' , 'cloudfront' , 'microsoft' , 'valve' , 'epicgames' , 'google' , 'amazonaws')
@@ -7,6 +16,9 @@ from os import getpid, system, truncate
 system ( 'cls')
 
 system ('color a')
+
+#this flag will be true if there is a connection with a blacklisted ip 
+alarm = False
 
 report = open('report.txt' , 'w+')
 report.truncate(0)
@@ -20,17 +32,12 @@ def getName (address):
     with open(r'currentAddress.temp' , 'r') as curAddress:
         lines = curAddress.readlines()
         for row in lines:
-            if ('Name:' in row):
-                
-                    name = row
-                    break
-            # if can't find the address and throws this error <ip> : Non-existent domain (for example)    
-            elif ('***' in row):
-                    name = "can't find " + address + "you should check it manually"
-                    break
-                
+            # if nslookup was able to get a name
+            if ('Name' in row): 
+                name = row;      
+    return name                
 
-    return name
+    
 
 # a function that gets the name of the process trough the process identifier
 def getPidName (m_pid):
@@ -39,11 +46,12 @@ def getPidName (m_pid):
         lines = tasks.readlines()
         for row in lines:
     	    if (m_pid in row):
-                for i in range (0,28):
+                for i in range (0,26):
                     name += row[i]
-
+                break        
     return name
 
+#main loop
 while (True):
 
     # Welcome message
@@ -61,13 +69,15 @@ while (True):
         system ('netstat.exe -ano > ' + os.getcwd() + "/connections.jasf")
         system ('tasklist > ' + os.getcwd() + "/tasks.jasf")
         print ("This are the connections that are established with your computer:")
+        print ("-------------------------------------------------------------------")
+        print ('\n')
         with open(r'connections.jasf', 'r') as connections:
         # read all lines using readline()
             lines = connections.readlines()
             for row in lines:
                 # Foreign address starts at position 32
                 foreignAddress = ""
-                # PID (process identifier) start at position 71
+                
                 pid = ""
                 if ('ESTABLISHED' in row):
                     for i in range(32 , 500):
@@ -75,21 +85,37 @@ while (True):
                             break
                         else:
                             foreignAddress += row[i]
-
-                    for j in range(71 , 76):
+                    # PID (process identifier) start at position 71 
+                    for j in range(72 , 76):
                         if (row[j] == ' '):
                             break
                         else:
                             pid += row[j]    
                     
+                    #check if the foreign address it's on the blacklist
+                    with open(r"ip_blacklist_database.txt", 'r') as ip_blacklist:
+                        black_ip = ip_blacklist.readlines()
+                        for ip in black_ip:
+                            if (foreignAddress in ip):
+                                system('color c')
+                                print ("Warning: " + foreignAddress + " It's on the blacklist")
+                                alarm = True
+
+                    # if the ip is different to 127.0.0.1 we will print the information of that ip
                     if (foreignAddress != '127.0.0.1'):
-                        print('ADDRESS: ' + foreignAddress + ' -- PID: ' + pid + ' -- ' + getName(foreignAddress) + ' -- PROCESS NAME: ' + getPidName(pid))
-                        print ("\n")
-                        report.write('ADDRESS: ' + foreignAddress + ' -- PID: ' + pid + ' -- ' + getName(foreignAddress) + ' -- PROCESS NAME: ' + getPidName(pid) + '\n')
+                        print ("=======================================================")
+                        print('Address: ' + foreignAddress + '\n' + 'PID:     ' + pid + '\n'  + 'Process name: ' + getPidName(pid) +  '\n'  + getName(foreignAddress))
+                        report.write("=====================================================================" + '\n')
+                        report.write('Address: ' + foreignAddress + '\n' + 'PID:     ' + pid  + '\n'  + 'Process name: ' + getPidName(pid) +  '\n'  + getName(foreignAddress))
                         report.write ("\n")
 
             report.close()
         print ("Done!")
+
+        # if the foreign address was found on the blacklist warn the user
+        if (alarm):
+            print ("Warning: a possible backdoor has been detected, take actions now!")
+
         print (" A file called report.txt has been created ")
         input('Press ENTER to continue...')
         system ('cls')   
